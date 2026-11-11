@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>loopj</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/app.mjs"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">loopj</div>
+      <div class="top-actions">
+        <span id="connection" class="connection" role="status">连接中</span>
+        <button id="reload" hidden>重载看板</button>
+      </div>
+    </header>
+    <main>
+      <div class="intro">
+        <div class="eyebrow">本机执行记录</div>
+        <p>按 Issue 查看各轮执行、待确认事项和时间线。</p>
+      </div>
+      <section class="metrics" id="metrics" aria-label="轮次与卡片统计"></section>
+      <p id="status" class="status-line" role="status">正在读取 Hub 状态…</p>
+      <section class="operator-tools">
+        <section id="collector" class="collector-panel" hidden>
+          <div class="collector-header">
+            <strong>Octo 定时采集</strong>
+            <button id="collector-toggle" type="button" role="switch" aria-checked="false" aria-label="Octo 定时采集">开启</button>
+          </div>
+          <p id="collector-status" class="meta" role="status"></p>
+          <p id="collector-last" class="meta"></p>
+          <p id="collector-next" class="meta"></p>
+          <details>
+            <summary>最近 50 条采集日志</summary>
+            <ol id="collector-logs" class="collector-logs"></ol>
+          </details>
+        </section>
+        <form id="collect" hidden>
+          <label for="collect-issue">手动采集 Octo Issue</label>
+          <div class="source-links">
+            <input id="collect-issue" placeholder="例如 DEMO-256" maxlength="80" required>
+            <select id="collect-rule" aria-label="指定采集规则">
+              <option value="">自动匹配规则</option>
+            </select>
+            <button type="submit" value="preview">查看匹配规则</button>
+            <button type="submit" value="collect">采集入队</button>
+          </div>
+          <p class="meta">可预览规则，或选择指定规则为同一个 Issue 补派任务。</p>
+          <p id="collect-result" class="meta" role="status"></p>
+        </form>
+        <details>
+          <summary>流程帮助</summary>
+          <p>在看板选中任务可查进度，点轮次可查时间线。待确认卡可直接选择答复并填写说明。</p>
+          <p>在 Octo 使用 /提需求、/确认提需求、/我的需求，或在原 Issue 留评论。Octo 会按当前登录账号识别提交人。</p>
+        </details>
+      </section>
+      <div class="workspace">
+        <section class="panel issues">
+          <div class="panel-head">
+            <h2>Issue 列表</h2>
+            <label class="search"><span>搜索</span><input id="search" type="search" placeholder="任务 ID、Issue、规则或标题"></label>
+            <label class="filter"><span>状态</span><select id="filter">
+              <option value="">全部任务</option>
+              <optgroup label="开发阶段">
+                <option value="accepted">已受理</option><option value="planning">方案中</option><option value="plan_review">待确认方案</option>
+                <option value="coding">编码中</option><option value="coded">编码完成</option><option value="test_branch_pushed">测试分支已推送</option><option value="deployed">准备提测</option>
+                <option value="testing">已提测</option><option value="delivered">分支已交付</option><option value="released">已上线</option>
+              </optgroup>
+              <optgroup label="执行轮次">
+                <option value="queued">排队中</option><option value="running">运行中</option>
+                <option value="retrying">待重试</option><option value="stopping">停止中</option>
+                <option value="unknown">状态待核对</option><option value="idle">暂无活动轮次</option>
+              </optgroup>
+              <optgroup label="卡片和任务">
+                <option value="waiting">待确认或回复</option><option value="answered">已回复</option>
+                <option value="followup">待跟进</option><option value="closed">已结案</option><option value="archived">已归档</option>
+              </optgroup>
+            </select></label>
+          </div>
+          <div id="issues"></div>
+          <button id="older" class="older" hidden>加载更早的轮次</button>
+        </section>
+        <section id="detail" class="panel detail" aria-label="Issue 与轮次详情"></section>
+      </div>
+    </main>
+  </body>
+</html>
